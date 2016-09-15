@@ -1,0 +1,9 @@
+git clone- only works if you did not download the repo already
+git add - add a file to make changes to
+git commit -m "Message"
+git push to push changes
+git pull to get changes if you made it on a different computer
+git branch <branch name> - creates a new branch
+git checkout <branch name> - switch to the branch
+git push origin to push branch changes
+git pull origin to poigoojdpbgkg
