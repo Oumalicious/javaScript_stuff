@@ -102,13 +102,12 @@ class StringEditor extends Component {
 							{this.state.timer}
 						</div>
 				</div>			<br /> <br /> <br /> <br /> <br /> <br />
-				<div>			
+				<form>			
 						{this.state.optionKeys};
 						<select id={this.state.scrollBox}>
 	
 						</select>
-						{this.state.keys}	
-				</div>
+				</form>
 			</form>
 		)	
 	}
