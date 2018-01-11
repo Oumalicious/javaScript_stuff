@@ -69,12 +69,22 @@ class StringEditor extends Component {
 			},1000);
 		}
 	}
-	
+	{
+	/*TODO
+		1 : Fix Unexpected token error
+		2 : let optionKeys be the keys for this.state.option
+		3 : iterator through optionKeys
+		4 : For each option in optionKey,
+			4.1 : Create an 'option' object
+			4.2 : Append the 'option' object to the selectionBox
+	*/
+	}
 	onGenerateKeys(){
 		this.setState({optionKeys:Object.keys({this.state.options});
-		for(var  i = 0, i < {this.state.tempKeys.length} ; ++i){
+		for(var  i = 0, i < {this.state.optionKeys.length} ; ++i){
 			var anOption = {this.state.optionKeys[i]};
-			var optionChild = 
+			var optionChild = React.createElement('option', {}. anOption);
+			{this.state.selectionBox}.appendChild(optionChild);
 		}
 	}
 	render(){ 
