@@ -1,11 +1,14 @@
 import React, {Component} from  'react';
 import * as DataStore from './DataStore';
 import {FormSelect} from 'elemental';
-
 class StringEditor extends Component {
 	constructor(props){
 		super(props);
 		var img_array = ['/images/blue_heart_32.png','/images/green_heart_32.png','/images/yellow_heart_32.png','/images/olive_heart_32.png'];
+		var options = [
+			{ label : "George", value : "0001" },
+			{ label : "Mary", value : "9999" }
+		];
 		this.state = {
 			example:'Try to edit this String.',
 			editField:'',
@@ -16,9 +19,9 @@ class StringEditor extends Component {
 			imgSRC: img_array[0],
 			timer:'Hover this text to start a timer.',
 			timerTrigger: false,
-			options: null,
-			optionsValue:'\'nothing\'',	
-			selectedValue:'a value',
+			options: options,
+			selectedOption:'0001',
+			optionsString:'\'nothing\'',	
 		};
 	}
 	componentWillMount()
@@ -68,8 +71,9 @@ class StringEditor extends Component {
 			},1000);
 		}
 	}
-	onOptionChangeEvent(e){
-		this.setState({optionsValue: e});
+	onOptionChange(val){
+		this.setState({optionsString: val});
+		this.setState({selectedOption: val});
 	}
 	render(){ 
 		return(
@@ -87,25 +91,12 @@ class StringEditor extends Component {
 				</div>			<br /> <br /> <br /> <br /> <br /> <br />
 				<form>	
 						<FormSelect
-							options={[
-										'option1',
-										'option2',
-										'option3',
-										'option4',
-										'option5'
-										]
-							}
-							value={
-										'val1',
-										'val2',
-										'val3',
-										'val4',
-										'val5'
-							}														
-							onChange={this.onOptionChangeEvent.bind(this)}
+							options={this.state.options}
+							value={this.state.selectedOption}
+							onChange={this.onOptionChange.bind(this)}
 						/>
 						<div>
-							You selected {this.state.optionsValue}.
+							You selected {this.state.optionsString}.
 						</div>
 				</form>
 			</form>
