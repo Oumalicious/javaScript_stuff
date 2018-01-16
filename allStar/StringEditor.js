@@ -1,5 +1,6 @@
 import React, {Component} from  'react';
 import * as DataStore from './DataStore';
+import {FormSelect} from 'elemental';
 
 class StringEditor extends Component {
 	constructor(props){
@@ -15,12 +16,10 @@ class StringEditor extends Component {
 			imgSRC: img_array[0],
 			timer:'Hover this text to start a timer.',
 			timerTrigger: false,
-			selectBox: 'selectBox',
 			options: null,
-			optionKeys: null,
-			scrollBox: 'scrollBox',
-			generateKeys: 'Generate \'option\' keys',		
-};
+			optionsValue:'No selected value',	
+			selectValue:'',
+	};
 	}
 	componentWillMount()
 	{
@@ -69,23 +68,9 @@ class StringEditor extends Component {
 			},1000);
 		}
 	}
-	{
-	/*TODO
-		1 : Fix Unexpected token error
-		2 : let optionKeys be the keys for this.state.option
-		3 : iterator through optionKeys
-		4 : For each option in optionKey,
-			4.1 : Create an 'option' object
-			4.2 : Append the 'option' object to the selectionBox
-	*/
-	}
-	onGenerateKeys(){
-		this.setState({optionKeys:Object.keys({this.state.options});
-		for(var  i = 0, i < {this.state.optionKeys.length} ; ++i){
-			var anOption = {this.state.optionKeys[i]};
-			var optionChild = React.createElement('option', {}. anOption);
-			{this.state.selectionBox}.appendChild(optionChild);
-		}
+	onOptionChangeEvent(e){
+		this.setState({optionsValue: e});
+		this.setState({selectedValue: e});
 	}
 	render(){ 
 		return(
@@ -103,10 +88,14 @@ class StringEditor extends Component {
 						</div>
 				</div>			<br /> <br /> <br /> <br /> <br /> <br />
 				<form>			
-						{this.state.optionKeys};
-						<select id={this.state.scrollBox}>
-	
-						</select>
+						<FormSelect
+							options={this.state.options}
+							value={this.state.selectedValue}
+							onChange={this.onOptionChangeEvent.bind(this)}
+						/>
+						<div>
+							You selected {this.state.optionsValue}.
+						</div>
 				</form>
 			</form>
 		)	
