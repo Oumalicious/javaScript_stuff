@@ -22,7 +22,7 @@ class StringEditor extends Component {
 			optionsValue:'No selected value',
 			//the initial value of the selectionBox
 			selectValue:'',
-	};
+		};
 	}
 	componentWillMount()
 	{
