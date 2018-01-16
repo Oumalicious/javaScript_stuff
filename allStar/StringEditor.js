@@ -17,9 +17,9 @@ class StringEditor extends Component {
 			timer:'Hover this text to start a timer.',
 			timerTrigger: false,
 			options: null,
-			optionsValue:'No selected value',	
-			selectValue:'',
-	};
+			optionsValue:'\'nothing\'',	
+			selectedValue:'a value',
+		};
 	}
 	componentWillMount()
 	{
@@ -70,7 +70,6 @@ class StringEditor extends Component {
 	}
 	onOptionChangeEvent(e){
 		this.setState({optionsValue: e});
-		this.setState({selectedValue: e});
 	}
 	render(){ 
 		return(
@@ -80,17 +79,29 @@ class StringEditor extends Component {
 						<input type='text' value={this.state.editField} onChange={this.onChangeEvent.bind(this)}/>		<br /> <br />
 						<input type='button' onClick={this.onEditEvent.bind(this)} value={this.state.EditButton}/>
 						<input type='button' onClick={this.onClearEvent.bind(this)} value={this.state.ClearButton}/>
-						<input type='button' onClick={this.onGenerateKeys.bind(this)} value={this.state.generateKeys}/>
 						<br /> <br />
 						<img src={this.state.imgSRC} onMouseOver={this.onImgClickEvent.bind(this) }/>
 						<div onMouseOver={this.onTimerEvent.bind(this)} >
 							{this.state.timer}
 						</div>
 				</div>			<br /> <br /> <br /> <br /> <br /> <br />
-				<form>			
+				<form>	
 						<FormSelect
-							options={this.state.options}
-							value={this.state.selectedValue}
+							options={[
+										'option1',
+										'option2',
+										'option3',
+										'option4',
+										'option5'
+										]
+							}
+							value={
+										'val1',
+										'val2',
+										'val3',
+										'val4',
+										'val5'
+							}														
 							onChange={this.onOptionChangeEvent.bind(this)}
 						/>
 						<div>
