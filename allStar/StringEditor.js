@@ -1,5 +1,6 @@
 import React, {Component} from  'react';
 import * as DataStore from './DataStore';
+//added import
 import {FormSelect} from 'elemental';
 
 class StringEditor extends Component {
@@ -17,7 +18,9 @@ class StringEditor extends Component {
 			timer:'Hover this text to start a timer.',
 			timerTrigger: false,
 			options: null,
-			optionsValue:'No selected value',	
+			//the string the represents the select value
+			optionsValue:'No selected value',
+			//the initial value of the selectionBox
 			selectValue:'',
 	};
 	}
@@ -68,10 +71,13 @@ class StringEditor extends Component {
 			},1000);
 		}
 	}
+	
+	//added function
 	onOptionChangeEvent(e){
 		this.setState({optionsValue: e});
 		this.setState({selectedValue: e});
 	}
+	
 	render(){ 
 		return(
 			<form>
@@ -87,7 +93,8 @@ class StringEditor extends Component {
 							{this.state.timer}
 						</div>
 				</div>			<br /> <br /> <br /> <br /> <br /> <br />
-				<form>			
+				<form>		
+						//added FormSelect
 						<FormSelect
 							options={this.state.options}
 							value={this.state.selectedValue}
