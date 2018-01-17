@@ -36,9 +36,7 @@ class StringEditor extends Component {
 		var keys = Object.keys(this.state.options);
 		var tempArray = [];
 		for( var key in keys ){
-				tempArray.push({ label : key,
-										value: keys[key]
-									});
+				tempArray.push({ label : key, value: keys[key]} );
 		}
 		this.setState({optionArray: tempArray});
 	}
