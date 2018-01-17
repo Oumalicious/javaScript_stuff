@@ -21,24 +21,29 @@ class StringEditor extends Component {
 			timer:'Hover this text to start a timer.',
 			timerTrigger: false,
 //			optionsTemp: options,
-			options: null,
-			optionsArray: [],
+			options: [],
 			selectedOption:'',
 			optionsString:'\'nothing\'',	
 		};
 	}
+	
+			
 	componentWillMount()
 	{
 		var that=this;
-		DataStore.fetchOptions(function(options){
-			that.setState({options : options});
+		let createOptions = new Promise(function(optionsResolve){
+			DataStore.fetchOptions(function(options){
+				that.setState({options : options});
+			});
 		});
-		var keys = Object.keys(this.state.options);
-		var tempArray = [];
-		for( var key in keys ){
-			tempArray.push({ label : key, value: keys[key]} );
-		}
-		this.setState({optionArray: tempArray});
+		createOptions.then(function(optionsResolve){
+			var keys = Object.keys(optionsResolve);
+			var tempArray = [];
+			for( var key in keys ){
+				tempArray.push({ label : key, value: keys[key]} );
+			}
+			this.setState({options: tempArray});
+		});
 	}
 	onEditEvent(e){
 		if(this.state.editField!==""){
