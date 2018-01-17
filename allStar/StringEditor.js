@@ -20,8 +20,8 @@ class StringEditor extends Component {
 			imgSRC: img_array[0],
 			timer:'Hover this text to start a timer.',
 			timerTrigger: false,
-//			optionsTemp: options,
-			optionsSelect: [],
+			optionsTemp: null,
+			optionsSelection: [],
 			selectedOption:'',
 			optionsString:'\'nothing\'',	
 		};
@@ -30,18 +30,18 @@ class StringEditor extends Component {
 	componentWillMount()
 	{
 		var that=this;
-		let createOptions = new Promise(function(optionsResolve){
+		let createOptions = new Promise(function(){
 			DataStore.fetchOptions(function(options){
-				that.setState({optionsSelect : options});
+				that.setState({optionsTemp : options});
 			});
 		});
-		createOptions.then(function(optionsResolve){
-			var keys = Object.keys(optionsResolve);
+		createOptions.then(function(){
+			var keys = Object.keys(this.state.optionsTemp);
 			var tempArray = [];
 			for( var key in keys ){
 				tempArray.push({ label : key, value: keys[key]} );
 			}
-			this.setState({optionsSelect: tempArray});
+			this.setState({optionsSelection: tempArray});
 		});
 	}
 	onEditEvent(e){
@@ -104,7 +104,7 @@ class StringEditor extends Component {
 				</div>			 <br />
 				<form>	
 						<FormSelect
-							options={this.state.optionsSelect}
+							options={this.state.optionsSelection}
 							value={this.state.selectedOption}
 							onChange={this.onOptionChange.bind(this)}
 						/>			<br />
