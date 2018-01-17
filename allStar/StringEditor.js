@@ -9,6 +9,7 @@ class StringEditor extends Component {
 //			{ label : "George", value : "0001" },
 //			{ label : "Mary", value : "9999" }
 //		];
+//		var options = [];
 		this.state = {
 			example:'Try to edit this String.',
 			editField:'',
@@ -21,7 +22,8 @@ class StringEditor extends Component {
 			timerTrigger: false,
 //			optionsTemp: options,
 			options: null,
-			selectedOption:'0001',
+			optionsArray: [],
+			selectedOption:'',
 			optionsString:'\'nothing\'',	
 		};
 	}
@@ -31,6 +33,14 @@ class StringEditor extends Component {
 		DataStore.fetchOptions(function(options){
 			that.setState({options : options});
 		});
+		var keys = Object.keys(this.state.options);
+		var tempArray = [];
+		for( var key in keys ){
+				tempArray.push({ label : key,
+										value: keys[key]
+									});
+		}
+		this.setState({optionArray: tempArray});
 	}
 	onEditEvent(e){
 		if(this.state.editField!==""){
