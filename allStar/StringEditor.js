@@ -55,6 +55,7 @@ class StringEditor extends Component {
 							s+= optionJSON + ', ';
 						}else s+= ele[i][j];
 					}
+					s+= '] ';
 				}else if(typeof ele[i] === 'object'){
 					var optionJSON = JSON.stringify(ele[i]);
 					s+= optionJSON + ', ';
