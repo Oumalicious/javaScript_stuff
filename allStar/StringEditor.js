@@ -20,7 +20,6 @@ class StringEditor extends Component {
 			imgSRC: img_array[0],
 			timer:'Hover this text to start a timer.',
 			timerTrigger: false,
-			optionsTemp: null,
 			optionsSelection: [],
 			selectedOption:'',
 			optionsString:'\'nothing\'',	
@@ -30,18 +29,14 @@ class StringEditor extends Component {
 	componentWillMount()
 	{
 		var that=this;
-		let createOptions = new Promise(function(){
-			DataStore.fetchOptions(function(options){
-				that.setState({optionsTemp : options});
-			});
-		});
-		createOptions.then(function(){
-			var keys = Object.keys(this.state.optionsTemp);
+		DataStore.fetchOptions(function(options){
+			var keys = Object.keys(options);
 			var tempArray = [];
-			for( var key in keys ){
-				tempArray.push({ label : key, value: keys[key]} );
+			for( var key in keys){
+//				tempArray.push({ label : key, value : keys[key] });
+				tempArray.push({ label : keys[key], value : key });
 			}
-			this.setState({optionsSelection: tempArray});
+			that.setState({optionsSelection: tempArray});
 		});
 	}
 	onEditEvent(e){
@@ -102,15 +97,15 @@ class StringEditor extends Component {
 							{this.state.timer}
 						</div>
 				</div>			 <br />
-				<form>	
+				<form>
+						<div>
+							You have selected {this.state.optionsString}			<br />
+						</div>	
 						<FormSelect
 							options={this.state.optionsSelection}
 							value={this.state.selectedOption}
 							onChange={this.onOptionChange.bind(this)}
 						/>			<br />
-						<div>
-							You selected {this.state.optionsString}.
-						</div>
 				</form>
 			</form>
 		)	
