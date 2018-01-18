@@ -20,6 +20,7 @@ class StringEditor extends Component {
 			imgSRC: img_array[0],
 			timer:'Hover this text to start a timer.',
 			timerTrigger: false,
+			optionsDB: null,
 			optionsSelection: [],
 			selectedOption:'',
 			optionsString:'nothing',	
@@ -30,12 +31,13 @@ class StringEditor extends Component {
 	{
 		var that=this;
 		DataStore.fetchOptions(function(options){
+			that.setState({optionsDB : options});
 			var keys = Object.keys(options);
 			var tempArray = [];
 			for( var key in keys){
 				var keyValue = options[keys[key]];
-				tempArray.push({ label : keys[key], value : options[keys[key]] });
-//				tempArray.push({ label : keys[key], value : this.typeCheckedElement.bind(keyValue)});
+//				tempArray.push({ label : keys[key], value : options[keys[key]] });
+				tempArray.push({ label : keys[key], value : that.typeCheckedElement.bind(keyValue)});
 			}
 			that.setState({optionsSelection: tempArray});
 		});
@@ -45,12 +47,25 @@ class StringEditor extends Component {
 		if(Array.isArray(ele)){
 			var s = '[';
 			for ( var i = 0; i < ele.length ; ++i ){
-				s += this.typeCheckedElement.bind(ele[i]) + ', ';
+				if(Array.isArray(ele[i])){
+					s+= ' [';
+					for ( var j = 0; j < ele[i].length ; ++j ){
+						if(typeof ele[i][j] === 'object'){
+							var optionJSON = JSON.stringify(ele[i][j]);
+							s+= optionJSON + ', ';
+						}else s+= ele[i][j];
+					}
+				}else if(typeof ele[i] === 'object'){
+					var optionJSON = JSON.stringify(ele[i]);
+					s+= optionJSON + ', ';
+				}else s+= ele[i];
 			}
-			return s.substring(0,s.lastIndexOf(', '));
-		}		
-		else return ele.toString();
-	}
+		}else if(typeof ele[i] === 'object'){
+			var optionJSON = JSON.stringify(ele[i]);
+			s+= optionJSON + ', ';
+		}else s+= ele[i];
+		return s.substring(0,s.lastIndexOf(', '));
+	}		
 	
 	onEditEvent(e){
 		if(this.state.editField!==""){
