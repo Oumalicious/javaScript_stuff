@@ -22,7 +22,7 @@ class StringEditor extends Component {
 			timerTrigger: false,
 			optionsSelection: [],
 			selectedOption:'',
-			optionsString:'\'nothing\'',	
+			optionsString:'nothing',	
 		};
 	}	
 			
@@ -33,12 +33,25 @@ class StringEditor extends Component {
 			var keys = Object.keys(options);
 			var tempArray = [];
 			for( var key in keys){
-//				tempArray.push({ label : key, value : keys[key] });
-				tempArray.push({ label : keys[key], value : key });
+				var keyValue = options[keys[key]];
+				tempArray.push({ label : keys[key], value : options[keys[key]] });
+//				tempArray.push({ label : keys[key], value : this.typeCheckedElement.bind(keyValue)});
 			}
 			that.setState({optionsSelection: tempArray});
 		});
 	}
+
+	typeCheckedElement(ele){
+		if(Array.isArray(ele)){
+			var s = '[';
+			for ( var i = 0; i < ele.length ; ++i ){
+				s += this.typeCheckedElement.bind(ele[i]) + ', ';
+			}
+			return s.substring(0,s.lastIndexOf(', '));
+		}		
+		else return ele.toString();
+	}
+	
 	onEditEvent(e){
 		if(this.state.editField!==""){
 			this.setState({example: this.state.editField});
@@ -97,15 +110,15 @@ class StringEditor extends Component {
 							{this.state.timer}
 						</div>
 				</div>			 <br />
-				<form>
-						<div>
-							You have selected {this.state.optionsString}			<br />
-						</div>	
+				<form>	
 						<FormSelect
 							options={this.state.optionsSelection}
 							value={this.state.selectedOption}
 							onChange={this.onOptionChange.bind(this)}
 						/>			<br />
+						<div>
+							You have selected {this.state.optionsString}
+						</div>
 				</form>
 			</form>
 		)	
