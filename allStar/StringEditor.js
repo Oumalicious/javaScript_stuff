@@ -20,7 +20,6 @@ class StringEditor extends Component {
 			imgSRC: img_array[0],
 			timer:'Hover this text to start a timer.',
 			timerTrigger: false,
-			optionsDB: null,
 			optionsSelection: [],
 			selectedOption:'',
 			optionsString:'nothing',	
@@ -31,18 +30,20 @@ class StringEditor extends Component {
 	{
 		var that=this;
 		DataStore.fetchOptions(function(options){
-			that.setState({optionsDB : options});
-			var keys = Object.keys(options);
+			var optionsDB = options;
+			var keys = Object.keys(optionsDB);
 			var tempArray = [];
 			for( var key in keys){
-				var keyValue = options[keys[key]];
+				var keyValue = optionsDB[keys[key]];
 //				tempArray.push({ label : keys[key], value : options[keys[key]] });
-				tempArray.push({ label : keys[key], value : that.typeCheckedElement.bind(keyValue)});
+//				tempArray.push({ label : options[key], value : that.typeCheckedElement.bind(keyValue)});
+				tempArray.push({ label : keys[key], value : JSON.stringify(keyValue)});
 			}
 			that.setState({optionsSelection: tempArray});
 		});
 	}
 
+	/*
 	typeCheckedElement(ele){
 		if(Array.isArray(ele)){
 			var s = '[';
@@ -61,13 +62,14 @@ class StringEditor extends Component {
 					s+= optionJSON + ', ';
 				}else s+= ele[i];
 			}
-			return s.substring(0,s.lastIndexOf(', '))+']';
+			return s.substring(0,s.lastIndexOf(', ')) + ']';
 		}else if(typeof ele[i] === 'object'){
 			var optionJSON = JSON.stringify(ele[i]);
 			s+= optionJSON + ', ';
-		}else s+= ele[i];
+		}else s+= ele[i] + ', ';
 		return s.substring(0,s.lastIndexOf(', '));
 	}		
+	*/
 	
 	onEditEvent(e){
 		if(this.state.editField!==""){
