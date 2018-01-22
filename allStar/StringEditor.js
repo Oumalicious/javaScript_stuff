@@ -1,15 +1,137 @@
 import React, {Component} from  'react';
 import * as DataStore from './DataStore';
 import {FormSelect} from 'elemental';
+
+
+class SimpleStringEditor extends Component {
+	constructor(props){
+		super(props);
+		this.state = {
+			optionsString: this.props.stringObject,
+			stringDisplay: this.props.stringObject,
+			editField: ''
+		}
+	}
+	onInputChangeEvent(e){
+		this.setState({editField: e.target.value});		
+	}	
+
+	onEditTextEvent(e){
+		if(e.target.value==''){
+			this.setState({stringDisplay: this.state.editField});
+		}
+	}
+	
+	onClearTextEvent(e){
+		this.setState({stringDisplay : ''});
+	}
+
+	onRevertTextEvent(e){
+		this.setState({stringDisplay : this.state.optionsString});
+	}
+
+	onModifyTextEvent(e){
+		this.setState({optionsString : this.state.stringDisplay});
+	}
+
+	render(){ 
+		return(
+			<div>
+				<div>
+					{this.props.editStringText} : {this.state.stringDisplay}		
+				</div>		<br />
+				<div>
+					<input type='text' value={this.state.editField} onChange={this.onInputChangeEvent.bind(this)}/>			<br /> <br />
+					<input type ='button' value={this.props.editButtonText} onClick = {this.onEditTextEvent.bind(this)}/>
+					<input type ='button' value={this.props.clearButtonText} onClick = {this.onClearTextEvent.bind(this)}/>
+					<input type ='button' value={this.props.revertButtonText} onClick = {this.onRevertTextEvent.bind(this)}/>
+					<input type ='button' value={this.props.modifyButtonText} onClick = {this.onModifyTextEvent.bind(this)}/>
+				</div>
+			</div>
+		)
+	}	
+}
+
+class SimpleNumberEditor extends Component {
+	constructor(props){
+		super(props);
+		this.state = {
+			optionsNumber : this.props.numberObject,
+			numberDisplay : this.props.numberObject,
+			editField: ''
+		}
+	}
+	
+	onInputChangeEvent(e){
+		this.setState({editField : e.target.value});
+	}
+
+	onEditNumberEvent(e){
+		if(this.state.editField!== '' && ( parseInt(this.state.editField) < 0 || parseInt(this.state.editField) >= 0) ){
+			this.setState({numberDisplay : parseInt(this.state.editField)});
+		}
+	}
+
+	onClearNumberEvent(e){
+		this.setState({numberDisplay : 0});
+	}
+
+	onRevertNumberEvent(e){
+		this.setState({numberDisplay : this.state.optionsNumber});
+	}
+
+	onIncrementEvent(e){
+		if(this.state.editField!== '' && ( parseInt(this.state.editField) < 0 || parseInt(this.state.editField) >= 0) ){
+			this.setState({numberDisplay : this.state.numberDisplay + parseInt(this.state.editField)});
+		}
+	}
+	
+	onDecrementEvent(e){
+		if(this.state.editField!== '' && ( parseInt(this.state.editField) < 0 || parseInt(this.state.editField) >= 0) ){
+			this.setState({numberDisplay : this.state.numberDisplay + parseInt(this.state.editField)});
+		}
+	}
+
+	onModifyNumberEvent(e){
+		this.setState({optionsNumber : this.state.numberDisplay});
+	}
+
+	render(){
+		return(
+			<div>
+				<div>
+					{this.props.editNumberText} : {this.state.numberDisplay}
+				</div>			<br />
+				<div>
+					<input type = 'text' value = {this.state.editField} onChange = {this.onInputChangeEvent.bind(this)}/>			<br /> <br />
+					<input type = 'button' value = {this.props.editButtonText} onClick = {this.onEditNumberEvent.bind(this)}/>
+					<input type = 'button' value = {this.props.clearButtonText} onClick = {this.onClearNumberEvent.bind(this)}/>
+					<input type = 'button' value = {this.props.revertButtonText} onClick = {this.onRevertNumberEvent.bind(this)}/>
+					<input type = 'button' value = {this.props.incrementButtonText} onClick = {this.onIncrementEvent.bind(this)}/>
+					<input type = 'button' value = {this.props.decrementButtonText} onClick = {this.onDecrementEvent.bind(this)}/>
+					<input type = 'button' value = {this.props.modifyButtonText} onClick = {this.onModifyNumberEvent.bind(this)}/>
+				</div>
+			</div>
+		)
+	}	
+}
+
+class SimpleArrayEditor extends Component {
+	constructor(props){
+		super(props);
+	}
+}
+
+class SimpleObjectEditor extends Component {
+	constructor(props){
+		super(props);
+	}
+}
+
 class StringEditor extends Component {
 	constructor(props){
 		super(props);
 		var img_array = ['/images/blue_heart_32.png','/images/green_heart_32.png','/images/yellow_heart_32.png','/images/olive_heart_32.png'];
-//		var options = [
-//			{ label : "George", value : "0001" },
-//			{ label : "Mary", value : "9999" }
-//		];
-//		var options = [];
 		this.state = {
 			example:'Try to edit this String.',
 			editField:'',
@@ -23,7 +145,9 @@ class StringEditor extends Component {
 			optionsSelection: [],
 			selectedOption:'',
 			optionsString:'nothing',	
-		};
+			selected_type : null,
+			db_options: null
+		}
 	}	
 			
 	componentWillMount()
@@ -31,45 +155,14 @@ class StringEditor extends Component {
 		var that=this;
 		DataStore.fetchOptions(function(options){
 			var optionsDB = options;
-			var keys = Object.keys(optionsDB);
+			var keys = Object.keys(optionsDB).sort();
 			var tempArray = [];
 			for( var key in keys){
-				var keyValue = optionsDB[keys[key]];
-//				tempArray.push({ label : keys[key], value : options[keys[key]] });
-//				tempArray.push({ label : options[key], value : that.typeCheckedElement.bind(keyValue)});
-				tempArray.push({ label : keys[key], value : JSON.stringify(keyValue)});
+				tempArray.push({ label : keys[key], value : keys[key]});
 			}
-			that.setState({optionsSelection: tempArray});
+			that.setState({optionsSelection: tempArray, db_options: options});
 		});
 	}
-
-	/*
-	typeCheckedElement(ele){
-		if(Array.isArray(ele)){
-			var s = '[';
-			for ( var i = 0; i < ele.length ; ++i ){
-				if(Array.isArray(ele[i])){
-					s+= ' [';
-					for ( var j = 0; j < ele[i].length ; ++j ){
-						if(typeof ele[i][j] === 'object'){
-							var optionJSON = JSON.stringify(ele[i][j]);
-							s+= optionJSON + ', ';
-						}else s+= ele[i][j];
-					}
-					s+= '] ';
-				}else if(typeof ele[i] === 'object'){
-					var optionJSON = JSON.stringify(ele[i]);
-					s+= optionJSON + ', ';
-				}else s+= ele[i];
-			}
-			return s.substring(0,s.lastIndexOf(', ')) + ']';
-		}else if(typeof ele[i] === 'object'){
-			var optionJSON = JSON.stringify(ele[i]);
-			s+= optionJSON + ', ';
-		}else s+= ele[i] + ', ';
-		return s.substring(0,s.lastIndexOf(', '));
-	}		
-	*/
 	
 	onEditEvent(e){
 		if(this.state.editField!==""){
@@ -112,12 +205,15 @@ class StringEditor extends Component {
 		}
 	}
 	onOptionChange(val){
-		this.setState({optionsString: val});
-		this.setState({selectedOption: val});
+		var key = val;
+		var selected_type = typeof this.state.db_options[key];
+		this.setState({selectedOption: key , optionsString: this.state.db_options[key], selected_type: selected_type});
 	}
 	render(){ 
 		return(
-			<form>
+			<div>
+{
+/*
 				<div>
 						{this.state.example}		 <br /> <br />
 						<input type='text' value={this.state.editField} onChange={this.onChangeEvent.bind(this)}/>		<br /> <br />
@@ -129,17 +225,54 @@ class StringEditor extends Component {
 							{this.state.timer}
 						</div>
 				</div>			 <br />
-				<form>	
+*/
+}
+				<div>	
 						<FormSelect
 							options={this.state.optionsSelection}
 							value={this.state.selectedOption}
 							onChange={this.onOptionChange.bind(this)}
 						/>			<br />
-						<div>
-							You have selected {this.state.optionsString}
-						</div>
-				</form>
-			</form>
+				</div>
+				<div>
+				{
+					this.state.selected_type === 'string' &&
+					<SimpleStringEditor
+						editStringText = 'Edit the string'
+						stringObject = {this.state.optionsString}
+						editButtonText = 'Edit'
+						clearButtonText = 'Clear'
+						revertButtonText = 'Revert'
+						modifyButtonText = 'Modify the value'
+					/>
+				}	
+				{
+					this.state.selected_type === 'number' &&
+					<SimpleNumberEditor
+						editNumberText = 'Edit the number'
+						numberObject = {this.state.optionsString}
+						editButtonText = 'Edit'
+						clearButtonText = 'Clear'
+						revertButtonText = 'Revert'
+						incrementButtonText = 'Increment the value by the input'
+						decrementButtonText = 'Decrement the value by the input'
+						modifyButtonText = 'Modify the value'
+					/>
+				}
+				{
+					this.state.selected_type === 'object' &&
+					<SimpleObjectEditor
+					
+					/>
+				}
+				{
+					this.state.selected_type === 'array' &&
+					<SimpleArrayEditor
+					
+					/>
+				}
+				</div>
+			</div>
 		)	
 	}
 }
