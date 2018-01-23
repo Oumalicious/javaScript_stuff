@@ -9,15 +9,24 @@ class SimpleStringEditor extends Component {
 		this.state = {
 			optionsString: this.props.stringObject,
 			stringDisplay: this.props.stringObject,
-			editField: ''
+			editField : this.props.editField,
+			db_options : this.props.db_options,
+			key : this.props.selectionKey,
 		}
 	}
+	
+	componentWillReceiveProps(props)
+   {
+      this.setState({stringDisplay : props.stringObject, editField : props.editField});
+   }
+	
+
 	onInputChangeEvent(e){
 		this.setState({editField: e.target.value});		
 	}	
 
 	onEditTextEvent(e){
-		if(e.target.value==''){
+		if(this.state.editField!==''){
 			this.setState({stringDisplay: this.state.editField});
 		}
 	}
@@ -31,7 +40,9 @@ class SimpleStringEditor extends Component {
 	}
 
 	onModifyTextEvent(e){
-		this.setState({optionsString : this.state.stringDisplay});
+		var tempOptionsDB = this.state.db_options;
+		optionsDB[key] =  this.state.optionsString;
+		this.setState({db_options : tempOptionsDB});
 	}
 
 	render(){ 
@@ -39,9 +50,12 @@ class SimpleStringEditor extends Component {
 			<div>
 				<div>
 					{this.props.editStringText} : {this.state.stringDisplay}		
-				</div>		<br />
+				</div>
 				<div>
-					<input type='text' value={this.state.editField} onChange={this.onInputChangeEvent.bind(this)}/>			<br /> <br />
+					 The value is still {this.state.optionsString}
+				</div>
+				<div>
+					 <input type='text' value={this.state.editField} onChange={this.onInputChangeEvent.bind(this)}/>			<br /> <br />
 					<input type ='button' value={this.props.editButtonText} onClick = {this.onEditTextEvent.bind(this)}/>
 					<input type ='button' value={this.props.clearButtonText} onClick = {this.onClearTextEvent.bind(this)}/>
 					<input type ='button' value={this.props.revertButtonText} onClick = {this.onRevertTextEvent.bind(this)}/>
@@ -58,16 +72,25 @@ class SimpleNumberEditor extends Component {
 		this.state = {
 			optionsNumber : this.props.numberObject,
 			numberDisplay : this.props.numberObject,
-			editField: ''
+			editField : this.props.editField,
+			db_options : this.props.db_options,
+			key : this.props.selectionKey
 		}
 	}
 	
 	onInputChangeEvent(e){
-		this.setState({editField : e.target.value});
+		this.setState({editField : parseInt(e.target.value)});
+	}
+
+	componentWillReceiveProps(props)
+	{
+		this.setState({numberDisplay : props.numberObject, editField : props.editField});
 	}
 
 	onEditNumberEvent(e){
 		if(this.state.editField!== '' && ( parseInt(this.state.editField) < 0 || parseInt(this.state.editField) >= 0) ){
+//		if(this.state.editField!== ''){
+
 			this.setState({numberDisplay : parseInt(this.state.editField)});
 		}
 	}
@@ -88,7 +111,7 @@ class SimpleNumberEditor extends Component {
 	
 	onDecrementEvent(e){
 		if(this.state.editField!== '' && ( parseInt(this.state.editField) < 0 || parseInt(this.state.editField) >= 0) ){
-			this.setState({numberDisplay : this.state.numberDisplay + parseInt(this.state.editField)});
+			this.setState({numberDisplay : this.state.numberDisplay - parseInt(this.state.editField)});
 		}
 	}
 
@@ -101,7 +124,10 @@ class SimpleNumberEditor extends Component {
 			<div>
 				<div>
 					{this.props.editNumberText} : {this.state.numberDisplay}
-				</div>			<br />
+				</div>
+				<div>
+					This value is still {this.state.optionsNumber}
+				<div>			<br />
 				<div>
 					<input type = 'text' value = {this.state.editField} onChange = {this.onInputChangeEvent.bind(this)}/>			<br /> <br />
 					<input type = 'button' value = {this.props.editButtonText} onClick = {this.onEditNumberEvent.bind(this)}/>
@@ -119,6 +145,127 @@ class SimpleNumberEditor extends Component {
 class SimpleArrayEditor extends Component {
 	constructor(props){
 		super(props);
+		this.state = {
+			optionsArray :  this.props.arrayObject,
+			arrayDisplay : this.props.arrayObject,
+			optionsSelection : [],
+			optionsKeys: null,
+			selectedOption : '',
+			selected_type : null,
+			editField : '',
+			db_options : this.props.db_options,
+			key : this.props.selectionKey
+		}
+	}
+	
+	componentWillMount(){
+		var keys = Object.keys(this.state.arrayDisplay).sort();
+		var tempArray = [];
+		tempArray.push({ label : '', value : ''});
+		for( var key in keys ){
+			tempArray.push({ label : this.state.arrayDisplay[keys[key]], value : keys[key]});
+		}
+		this.setState({optionsSelection: tempArray, optionsKeys : keys}); 
+	}
+
+	componentWillReceiveProps(props){
+      this.setState({arrayDisplay : props.optionsArray});
+   }
+
+
+	onInputChangeEvent(e){
+		this.setState({editField : e.target.value});
+	}
+	
+	onOptionChange(val){
+		var key = val;
+		var selected_type;
+		if(this.state.optionsSelection[key]==null){
+			this.setState({selectedOption : key});
+		}else{
+			if(Array.isArray(this.state.optionsSelection[key])){
+				selected_type = 'array';
+			}else{
+				selected_type = typeof this.state.arrayDisplay[key];
+			}
+			this.setState({selectedOption: key , optionsString: this.state.arrayDisplay[key], selected_type: selected_type});
+		}
+	}
+	
+	render(){
+		return(
+			<div>
+				<div>
+					{this.props.editArrayText} : {JSON.stringify(this.state.arrayDisplay)}
+				</div>			<br />
+				<div>
+					<FormSelect
+						options = {this.state.optionsSelection}
+						value = {this.state.selectedOption}
+						onChange = {this.onOptionChange.bind(this)}
+					/>
+				</div>			<br />
+				<div>
+				{
+					this.state.selected_type === 'string' &&
+					<SimpleStringEditor
+						editStringText = 'Edit the string'
+						editField = ''
+						db_options = {this.state.db_options}
+						selectionKey = {this.state.key}
+						stringObject = {this.state.optionsString}
+						editButtonText = 'Edit'
+						clearButtonText = 'Clear'
+						revertButtonText = 'Revert'
+						modifyButtonText = 'Modify the value'
+					/>
+				}	
+				{
+					this.state.selected_type === 'number' &&
+					<SimpleNumberEditor
+						editNumberText = 'Edit the number'
+						editField = ''
+						db_options = {this.state.db_options}
+						selectionKey = {this.state.key}
+						numberObject = {this.state.optionsString}
+						editButtonText = 'Edit'
+						clearButtonText = 'Clear'
+						revertButtonText = 'Revert'
+						incrementButtonText = 'Increment the value by the input'
+						decrementButtonText = 'Decrement the value by the input'
+						modifyButtonText = 'Modify the value'
+					/>
+				}
+				{
+					this.state.selected_type === 'object' &&
+					<SimpleObjectEditor
+						editObjectText = 'Edit the object'
+						editFields =  ''
+						db_options = {this.state.db_options}
+						selectionKey = {this.state.key}
+						objectInstance = {this.state.optionsString}
+						editButtonText = 'Edit'
+						clearButtonText = 'Clear'
+						revertButtonText = 'Revert'
+						modifyButtonText = 'Modify the object'
+					/>
+				}
+				{
+					this.state.selected_type === 'array' &&
+					<SimpleArrayEditor
+						editArrayText = 'Edit the array'
+						selectionKey = {this.state.key}
+						arrayObject = {this.state.optionsString}
+						editButtonText = 'Edit'
+						clearButtonText = 'Clear'
+						revertButtonText = 'Revert'
+						modifyButtonText = 'Modify'
+				
+					/>
+				}
+				</div>
+			</div>
+		)
 	}
 }
 
@@ -157,6 +304,7 @@ class StringEditor extends Component {
 			var optionsDB = options;
 			var keys = Object.keys(optionsDB).sort();
 			var tempArray = [];
+			tempArray.push({ label : '', value : ''});
 			for( var key in keys){
 				tempArray.push({ label : keys[key], value : keys[key]});
 			}
@@ -206,8 +354,17 @@ class StringEditor extends Component {
 	}
 	onOptionChange(val){
 		var key = val;
-		var selected_type = typeof this.state.db_options[key];
-		this.setState({selectedOption: key , optionsString: this.state.db_options[key], selected_type: selected_type});
+		var selected_type;
+		if(this.state.db_options[key]==null){
+			this.setState({selectedOption : key});
+		}else{
+			if(Array.isArray(this.state.db_options[key])){
+				selected_type = 'array';
+			}else{
+				selected_type = typeof this.state.db_options[key];
+			}
+			this.setState({selectedOption: key , optionsString: this.state.db_options[key], selected_type: selected_type});
+		}
 	}
 	render(){ 
 		return(
@@ -239,6 +396,8 @@ class StringEditor extends Component {
 					this.state.selected_type === 'string' &&
 					<SimpleStringEditor
 						editStringText = 'Edit the string'
+						editField = ''
+						selectionKey = {this.state.selectedOption}
 						stringObject = {this.state.optionsString}
 						editButtonText = 'Edit'
 						clearButtonText = 'Clear'
@@ -250,6 +409,8 @@ class StringEditor extends Component {
 					this.state.selected_type === 'number' &&
 					<SimpleNumberEditor
 						editNumberText = 'Edit the number'
+						editField = ''
+						selectionKey = {this.state.selectedOption}
 						numberObject = {this.state.optionsString}
 						editButtonText = 'Edit'
 						clearButtonText = 'Clear'
@@ -262,13 +423,28 @@ class StringEditor extends Component {
 				{
 					this.state.selected_type === 'object' &&
 					<SimpleObjectEditor
-					
+						editObjectText = 'Edit the object'
+						editField = ''
+						selectionKey = {this.state.selectedOption}
+						objectInstance = {this.state.optionsString}
+						editButtonText = 'Edit'
+						clearButtonText = 'Clear'
+						revertButtonText = 'Revert'
+						modifyButtonText = 'Modify the object'
 					/>
 				}
 				{
 					this.state.selected_type === 'array' &&
 					<SimpleArrayEditor
-					
+						editArrayText = 'Edit the array'
+						editField = ''
+						selectionKey = {this.state.selectedOption}
+						arrayObject = {this.state.optionsString}
+						editButtonText = 'Edit'
+						clearButtonText = 'Clear'
+						revertButtonText = 'Revert'
+						modifyButtonText = 'Modify'
+				
 					/>
 				}
 				</div>
