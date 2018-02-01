@@ -113,6 +113,9 @@ class OptionsEditor extends Component {
 			boxShadow :'3.2px 4px #dcdcdc'
 		}
 		*/}
+		var radioBlockCSS = {
+			display : 'block',
+		}
 		return(
 			<div>
 		{/*
@@ -146,15 +149,17 @@ class OptionsEditor extends Component {
 					</FormField>
 					*/}
 					<form>
-						<label>	
-							<input type='radio' value="A-" onChange={this.onRadioChange.bind(this)}/>
-							PCW
+						<label style={radioBlockCSS}>	
+							<input type='radio' name='options' value="A-" onChange={this.onRadioChange.bind(this)}/>
+								PCW
 						</label>
-							<input type='radio' value="CD" onChange={this.onRadioChange.bind(this)}/>
-							CDPAP
-						<label>
-							<input type='radio' value="K-" onChange={this.onRadioChange.bind(this)}/>
-							KOREAN
+						<label style={radioBlockCSS}>
+							<input type='radio' name='options' value="CD" onChange={this.onRadioChange.bind(this)}/>
+								CDPAP
+						</label>
+						<label style={radioBlockCSS}>
+							<input type='radio' name='options' value="K-" onChange={this.onRadioChange.bind(this)}/>
+								KOREAN
 						</label>
 					</form>
 					<input type='text' value={this.state.editField} onChange={this.onInputChange.bind(this)}/>
