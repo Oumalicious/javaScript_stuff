@@ -1,7 +1,5 @@
 import React, {Component} from  'react';
 import * as DataStore from './DataStore';
-import {FormSelect} from 'elemental';
-import {FormField} from 'elemental';
 
 class MatchId extends Component {
 	constructor(props){
@@ -18,6 +16,7 @@ class MatchId extends Component {
 			saveButtonText: "save",
 			saveButtonDisabled: true,
 			idExistsText: '',
+			aidesMap: null,
 		}
 	}	
 
@@ -25,7 +24,12 @@ class MatchId extends Component {
 		var that=this;
 		DataStore.fetchAideBasicInfo(function(aides)
 		{
-			that.setState({aides: aides.sort()});
+			var tempArray = aides.sort();
+			var tempMap = new Map();
+			for(var index in tempArray){
+				tempMap.set(tempArray[index].allstar_id,tempArray[index].allstar_id)
+			}
+			that.setState({aides: tempArray, aidesMap : tempMap});
 		});
 	}
 
@@ -37,17 +41,10 @@ class MatchId extends Component {
 		var match = false;
 		this.setState({appendToFront : true, selectedRadio : e.target.value, appendedString : tempAppendedString});
 		if(this.state.editField.length!=0){
-			var aide
-			var id;
-			for(aide in this.state.aides){
-				id = this.state.aides[aide].allstar_id;
-				if(id==tempAppendedString){
-					match = true;
-					this.setState({saveButtonDisabled : true, idExistsText : "already exists." , appendedStringDisplay : 'inline-block', matchedId : true})
-					break;		
-				}
-			}
-			if(!match){
+			if(this.state.aidesMap.has(tempAppendedString)){
+				match = true;
+				this.setState({saveButtonDisabled : true, idExistsText : "already exists." , appendedStringDisplay : 'inline-block', matchedId : true})
+			}else{
 				this.setState({saveButtonDisabled : false, idExistsText : null, appendedStringDisplay : 'none', matchedId : 'false'});
 			}
 		}else{
@@ -63,17 +60,10 @@ class MatchId extends Component {
 		var match = false;
 		this.setState({appendToFront : false, selectedRadio : e.target.value, appendedString : tempAppendedString});
 		if(this.state.editField.length!=0){
-			var aide;
-			var id;
-			for(aide in this.state.aides){
-				id = this.state.aides[aide].allstar_id;
-				if(id===tempAppendedString){
-					match = true;
-					this.setState({saveButtonDisabled : true, idExistsText : " already exists.", appendedStringDisplay : 'inline-block', matchedId : true});
-					break;
-				}
-			}
-			if(!match){
+			if(this.state.aidesMap.has(tempAppendedString)){
+				match = true;
+				this.setState({saveButtonDisabled : true, idExistsText : " already exists.", appendedStringDisplay : 'inline-block', matchedId : true});
+			}else{
 				this.setState({saveButtonDisabled : false, idExistsText : null, appendedStringDisplay : 'none', matchedId : false});
 			}
 		}else{
@@ -95,17 +85,10 @@ class MatchId extends Component {
 		var match = false;
 		this.setState({editField : s, appendedString: tempAppendedString});
 		if(s.length!=0){
-			var aide;
-			var id;
-			for(aide in this.state.aides){
-				id = this.state.aides[aide].allstar_id;
-				if(id===tempAppendedString){
-					match = true;
-					this.setState({saveButtonDisabled : true, idExistsText : " already exists.", appendedStringDisplay : 'inline-block', matchedId: true});
-    				break; 
-				}
-			}	
-			if(!match){
+			if(this.state.aidesMap.has(tempAppendedString)){
+				match = true;
+				this.setState({saveButtonDisabled : true, idExistsText : " already exists.", appendedStringDisplay : 'inline-block', matchedId: true});
+			}else{
 				this.setState({saveButtonDisabled : false, idExistsText : null, appendedStringDisplay : 'none', matchedId : false});
 			}
 		}else{
@@ -119,7 +102,8 @@ class MatchId extends Component {
 		}
 		
 		var inputTextCSS = {
-			margin : '5px',
+			marginLeft : '5px',
+			marginRight : '5px',
 		}
 		
 		var flexCSS = {
