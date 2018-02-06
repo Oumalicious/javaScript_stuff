@@ -1,50 +1,19 @@
 import React, {Component} from  'react';
 import * as DataStore from './DataStore';
 import {FormSelect} from 'elemental';
-import {FormField} from 'elemental';
 
 
 class OptionsEditor extends Component {
 	constructor(props){
 		super(props);
-		var _db = {
-			PCW : 'A-',
-			CDPAP : 'CD',
-			KOREAN : 'K-'
-		}
 		this.state = {
-			/*
 			editField:'',
 			optionsSelection: [],
 			selectedOption:'',
 			db_options: null,
-			*/
-			editField:'',
-			sampleRadios:_db,
-			radiosArray: [],
-			selectedRadio: null,
-			appendedString: '',
 		}
 	}	
-
-	componentWillMount(){
-		var tempRadios = this.state.sampleRadios;
-		var keys = Object.keys(tempRadios).sort();
-		var tempArray = [];
-		for(var key in keys){
-			tempArray.push({ name : keys[key], label : keys[key]});
-		}
-		this.setState({radiosArray : tempArray, sampleRadio : tempRadios});
-	}
-
-	onRadioChange(val){
-		this.setState({selectedRadio : val.target.value, appendedString: val.target.value+this.state.editField});
-	}
-
-	onInputChange(e){
-		this.setState({editField : e.target.value, appendedString: this.state.selectedRadio+e.target.value});
-	}
-	/*		
+			
 	componentWillMount()
 	{
 		var that=this;
@@ -66,11 +35,8 @@ class OptionsEditor extends Component {
 		var display=this.state.db_options[key];
 		this.setState({selectedOption : key, editField : JSON.stringify(display, null, 2)});
 	}
-	*/
-
-	
 	render(){
-		{/*
+		
 		var selectOptionStyle = {
 			marginTop: '27px'
 		}
@@ -112,13 +78,8 @@ class OptionsEditor extends Component {
 			display : 'inline-block',
 			boxShadow :'3.2px 4px #dcdcdc'
 		}
-		*/}
-		var radioBlockCSS = {
-			display : 'block',
-		}
+		
 		return(
-			<div>
-		{/*
 			<div style={border}>
 					<div style ={selectOptionStyle}>
 						Select an option
@@ -137,38 +98,7 @@ class OptionsEditor extends Component {
 						<textarea style = {textAreaStyle} value={this.state.editField}/>
 					</div>
 			</div>
-		*/}
-				<div>
-					{/*
-					<FormField>
-						<Radio={
-							name={this.state.sampleRadios}
-							label={this.state.sampleRadioLabels}
-							onChange={this.onRadioChange.bind(this)}
-						}/>
-					</FormField>
-					*/}
-					<form>
-						<label style={radioBlockCSS}>	
-							<input type='radio' name='options' value="A-" onChange={this.onRadioChange.bind(this)}/>
-								PCW
-						</label>
-						<label style={radioBlockCSS}>
-							<input type='radio' name='options' value="CD" onChange={this.onRadioChange.bind(this)}/>
-								CDPAP
-						</label>
-						<label style={radioBlockCSS}>
-							<input type='radio' name='options' value="K-" onChange={this.onRadioChange.bind(this)}/>
-								KOREAN
-						</label>
-					</form>
-					<input type='text' value={this.state.editField} onChange={this.onInputChange.bind(this)}/>
-					<div>
-						Your appended string is {this.state.appendedString}
-					</div>
-				</div>
-			</div>
-		)
+		)	
 	}
 }
 export default OptionsEditor;	
