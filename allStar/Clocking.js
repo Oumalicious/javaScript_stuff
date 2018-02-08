@@ -2,7 +2,7 @@ import React, {Component} from  'react';
 import * as DataStore from './DataStore';
 import {FormSelect} from 'elemental';
 import {FormField} from 'elemental';
-import {Moment} from 'moment';
+import Moment from 'moment';
 
 class Clocking extends Component {
 	constructor(props){
@@ -14,74 +14,51 @@ class Clocking extends Component {
 			clockInTime : '',
 			clockInDisabled : false,
 			clockInTimeDisplay : 'none',
-			clockInTimer: null,
 			clockedOutText : "Clock Out",
 			clockedOutTime: '',
 			clockedOutDisabled : true,
 			clockedOutDisplay : 'none',
-			clockOutTimer : null,
 			clockedOutTimeDisplay: 'none',
-			meridiem: 'please work',
-			hourWorked : 0,
+			hoursWorked : 0,
 			minutesWorked : 0,
-			timeWorked : '',
-			timeWorkedDisplay : 'none'
+			timeWorkedDisplay : 'none',
 		}
 	}	
 
 	componentWillMount(){
-		/*
 		var that = this;
 		var clock = setInterval(function(){
-			var on_going_timer = new Date();
-			var hours = on_going_timer.getHours();
-			var minutes = on_going_timer.getMinutes();
-			var seconds = on_going_timer.getSeconds();
-			var meridiem;
-			if(hours>12){
-				meridiem = 'a.m.';
-			}else{
-				meridiem = 'p.m.';
-			}
-			if(minutes<10){
-				minutes = ""+"0"+minutes;
-			}
-			if(seconds<10){
-				seconds = ""+"0"+seconds;
-			}
-			var timer_concat = ''+hours+":"+minutes+":"+seconds;
-			that.setState({currentClock : clock, currentClockTime : timer_concat});
+			var time_moment = Moment();
+			that.setState({currentClock : clock, currentClockTime : time_moment.format('LTS')});
 		},1000);
-		*/
-		var clock_moment = Moment();
-		this.setState({currentClock : clock_moment});
 	}
 	
 	onClockIn(e){
-		this.setState({clockInTime : this.state.currentClockTime, clockInDisplay : 'inline-block', 
+		var clock_in = Moment().format('LT');
+		this.setState({clockInTime : clock_in, clockInDisplay : 'inline-block', 
 clockInDisabled : true, clockInTimeDisplay : 'inline-block', clockedOutDisplay : 'inline-block', clockedOutDisabled : false});
 	}
 
 	onClockOut(e){
-		var temp_clock_in = this.state.clockInTime;
-		var temp_clock_out = this.state.currentClockTime;
+		var clock_in = Moment(this.state.clockInTime, 'LT');
+		var clock_out = Moment();
 		clearInterval(this.state.currentClock);
-		this.setState({clockedOutTime : this.state.currentClockTime, clockedOutDisabled : true, clockedOutTimeDisplay : 'inline-block', timeWorkedDisplay : 'block'});
-		var clock_in_split_array = temp_clock_in.split(":");
-		var clocked_out_split_array = temp_clock_out.split(":");
-		var _MINUTES = 1;
-		var _HOURS = 0;
-		var carry_over = false;
-		var minutes_worked = clocked_out_split_array[_MINUTES] - clock_in_split_array[_MINUTES];
-		if(minutes_worked<0){
-			minutes_worked+=60;
-			carry_over=true;
+		var hours_worked = clock_out.diff(clock_in, 'hours');
+		var minutes_worked = clock_out.diff(clock_in, 'minutes');
+		var seconds_worked = clock_out.diff(clock_in, 'seconds');
+		if(minutes_worked>0 && seconds_worked<60){
+			minutes_worked--;
 		}
-		var hours_worked = clocked_out_split_array[_HOURS] - clock_in_split_array[_HOURS];
-		if(carry_over){
+		if(minutes_worked>0 && seconds_worked>=60){
+			seconds_worked%=60;
+		}
+		if(hours_worked>0 && minutes_worked<60){
 			hours_worked--;
 		}
-		this.setState({hoursWorked : hours_worked, minutesWorked : minutes_worked, timeWorked : ""+hours_worked+" hr(s) "+minutes_worked+" minutes"});
+		if(hours_worked>0 && minutes_worked>=60){
+			minutes_worked%=60;
+		}
+		this.setState({clockedOutTime : clock_out.format('LT'), clockedOutDisabled : true, clockedOutTimeDisplay : 'inline-block', timeWorkedDisplay : 'block', hoursWorked : hours_worked, minutesWorked : minutes_worked});
 	}
 
 	render(){
@@ -103,7 +80,6 @@ clockInDisabled : true, clockInTimeDisplay : 'inline-block', clockedOutDisplay :
 		}
 
 		return(
-		<div>
 			<div>
 				<div>
 					{this.state.currentClockTime}
@@ -121,12 +97,9 @@ clockInDisabled : true, clockInTimeDisplay : 'inline-block', clockedOutDisplay :
 					</label>
 				</div>
 				<div style={time_worked_display}>
-					You worked for {this.state.timeWorked}. Get home safe c:
+					You worked for {this.state.hoursWorked} hr(s)  & {this.state.minutesWorked}minutes. Get home safe c:
 				</div>
 			</div>
-			<div>
-			</div>
-		</div>
 		)
 	}                                                 
 }
