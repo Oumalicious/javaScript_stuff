@@ -630,7 +630,7 @@ var payrolls = [
 	}
 ];
 
-function CanPaidLeave (start_date, payrolls){
+function PaidLeaveEligibility (start_date, payrolls){
 	var start_moment = Moment(start_date, "YYYYMMDD");
 	var total_hours = 0;
 	var DAYS_MET = false;
@@ -696,5 +696,5 @@ function CanPaidLeave (start_date, payrolls){
 	return eligible_status;
 }
 
-var result = CanPaidLeave(20171217,payrolls );
+var result = PaidLeaveEligibility(20171217,payrolls );
 console.log(JSON.stringify(result));
