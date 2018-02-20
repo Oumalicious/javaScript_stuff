@@ -647,12 +647,9 @@ function PaidLeaveEligibility (start_date, payrolls){
 		CAN_START = (start_moment.isBefore(week_number) || start_moment.isSame(week_number));
 		if(!(DAYS_MET) && days_employed >= 120){
 			DAYS_MET = true;
-			var temp_days_employed = days_employed;
-			var temp_moment = Moment(week_number, 'YYYYMMDD');
-			if(!(DAYS_MET) && temp_days_employed>=120){
-				var difference = temp_days_employed - 120;
-				DAYS_MET_MOMENT = Moment(week_number.subtract(difference,'days'), 'YYYYMMDD').format("YYYYMMDD");
-			}
+			var difference = days_employed - 120;
+			var temp_moment = Moment(week_number, 'YYYYMMDD').subtract(difference,'days');
+			DAYS_MET_MOMENT = temp_moment.format("YYYYMMDD");
 		}
 		if(!eligible && DAYS_MET && HOURS_MET){
 			eligible_date = (!eligible && DAYS_MET && HOURS_MET) ? eligible_DATE = HOURS_MET_MOMENT : eligible_date = DAYS_MET_MOMENT;
@@ -695,5 +692,5 @@ function PaidLeaveEligibility (start_date, payrolls){
 	return eligible_status;
 }
 
-var result = PaidLeaveEligibility(20171217,payrolls );
+var result = PaidLeaveEligibility(20170716,payrolls );
 console.log(JSON.stringify(result));
