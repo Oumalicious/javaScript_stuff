@@ -632,8 +632,6 @@ var payrolls = [
 
 function CanPaidLeave (start_date, payrolls){
 	var start_moment = Moment(start_date, "YYYYMMDD");
-	var days_employed;
-	var week_number;
 	var total_hours = 0;
 	var DAYS_MET = false;
 	var DAYS_MET_MOMENT;
@@ -644,9 +642,9 @@ function CanPaidLeave (start_date, payrolls){
 	var CAN_START;
 	for(var payroll in payrolls){
 		var current_week = payrolls[payroll];
-		week_number = Moment(payrolls[payroll].week, 'YYYYMMDD');
+		var week_number = Moment(payrolls[payroll].week, 'YYYYMMDD');
+		var days_employed = week_number.diff(start_moment, 'days');
 		CAN_START = (start_moment.isBefore(week_number) || start_moment.isSame(week_number));
-		days_employed = week_number.diff(start_moment, 'days');
 		if(!(DAYS_MET) && days_employed >= 120){
 			_DAYS_MET = true;
 			var temp_days_employed = days_employed;
