@@ -646,11 +646,10 @@ function PaidLeaveEligibility (start_date, payrolls){
 		var days_employed = week_number.diff(start_moment, 'days');
 		CAN_START = (start_moment.isBefore(week_number) || start_moment.isSame(week_number));
 		if(!(DAYS_MET) && days_employed >= 120){
-			_DAYS_MET = true;
+			DAYS_MET = true;
 			var temp_days_employed = days_employed;
 			var temp_moment = Moment(week_number, 'YYYYMMDD');
 			if(!(DAYS_MET) && temp_days_employed>=120){
-				DAYS_MET = true;
 				var difference = temp_days_employed - 120;
 				DAYS_MET_MOMENT = Moment(week_number.subtract(difference,'days'), 'YYYYMMDD').format("YYYYMMDD");
 			}
