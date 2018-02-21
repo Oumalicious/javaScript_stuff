@@ -228,6 +228,7 @@ var payrolls = [
 				"start_time" : "9:00 AM",
 				"end_time" : "12"
 			}
+
 		},
 		"__v" : 0,
 		"payroll_date" : 20171015
@@ -633,17 +634,19 @@ var payrolls = [
 function PaidLeaveEligibility (start_date, payrolls){
 	var start_moment = Moment(start_date, "YYYYMMDD");
 	var total_hours = 0;
+	var days_employed = 0;
 	var DAYS_MET = false;
-	var DAYS_MET_MOMENT;
+	var DAYS_MET_MOMENT = 'N/A';
 	var HOURS_MET = false;
-	var HOURS_MET_MOMENT;
+	var HOURS_MET_MOMENT = 'N/A';
 	var eligible = false;
-	var eligible_date = null;
+	var eligible_date = 'N/A';
+	var eligible_array = [];
 	var CAN_START;
 	for(var payroll in payrolls){
 		var current_week = payrolls[payroll];
 		var week_number = Moment(payrolls[payroll].week, 'YYYYMMDD');
-		var days_employed = week_number.diff(start_moment, 'days');
+		days_employed = week_number.diff(start_moment, 'days');
 		CAN_START = (start_moment.isBefore(week_number) || start_moment.isSame(week_number));
 		if(!(DAYS_MET) && days_employed >= 120){
 			DAYS_MET = true;
@@ -656,41 +659,50 @@ function PaidLeaveEligibility (start_date, payrolls){
 		}
 		var work_times = payrolls[payroll].work_times;
 		var days_worked = Object.keys(work_times);
-		var current_day_moment = Moment(start_moment.day(), 'dddd');
+		var current_day_moment = Moment("Sunday", 'dddd').format('e');
 		if(CAN_START){
 			for(var days in work_times){
+				var day_of_week = Moment(days, 'dddd').format('e');
+				var current_week = week_number;
 				if(Moment(work_times[days].start_time, 'h:mm a').isValid()){
-					var current_day = week_number;
 					var start_shift = Moment(work_times[days].start_time, 'h:mm a');
 					var end_shift = Moment(work_times[days].end_time, 'h:mm a');
 					var hours_worked = end_shift.diff(start_shift, 'hours', true);
 					total_hours += hours_worked;
-					var day_of_week = Moment(days_worked[days], 'dddd');
-					var days_difference = day_of_week.diff(current_day_moment, 'days');
-					current_day = current_day.add(days_difference, 'day');
+					var days_difference = day_of_week - current_day_moment;
+					current_week = current_week.add(days_difference, 'day');
+					days_employed += days_difference;
+					current_day_moment = Moment(current_week, "YYYYMMDD").format('e');
+					if(!(DAYS_MET) && days_employed >= 120){
+						DAYS_MET = true;
+						var difference = days_employed - 120;
+						var temp_moment = Moment(week_number, 'YYYYMMDD').subtract(difference,'days');
+						DAYS_MET_MOMENT = temp_moment.format('YYYYMMDD');
+					}
 					if(!(HOURS_MET) && total_hours >= 80){
 						HOURS_MET = true;
-						HOURS_MET_MOMENT = Moment(current_day, "YYYYMMDD").format("YYYYMMDD");
+						HOURS_MET_MOMENT = Moment(current_week, "YYYYMMDD").format("YYYYMMDD");
 					}
 					if(!eligible && DAYS_MET && HOURS_MET ){
 						eligible = true;
-						eligible_date = Moment(current_day, "YYYYMMDD").format("YYYYMMDD");
+						eligible_date = Moment(current_week, "YYYYMMDD").format("YYYYMMDD");
 					}
-					current_day_moment = current_day.add(1,'days');
+					var eligible_status = {
+						"week" : week_number.format('YYYYMMDD'),
+						"eligible" : eligible,
+						"eligible_date" : eligible_date,
+						"hours_met" : HOURS_MET_MOMENT,
+						"days_met" : DAYS_MET_MOMENT,
+						"total_hours" : total_hours,
+						"days_employed" : days_employed,
+					}
+					eligible_array.push(eligible_status);
 				}
 			}
 		}
 	}
-	var eligible_status = {
-		"eligible" : eligible,
-		"eligible_date" : eligible_date,
-		"hours_met" : HOURS_MET_MOMENT,
-		"days_met" : DAYS_MET_MOMENT,
-		"total_hours" : total_hours,
-		"days_employed" : days_employed,
-	}
-	return eligible_status;
+	return eligible_array;
 }
 
 var result = PaidLeaveEligibility(20170716,payrolls );
-console.log(JSON.stringify(result));
+console.log(JSON.stringify(result, null, 2));
