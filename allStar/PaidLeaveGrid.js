@@ -5,13 +5,14 @@ import {FormField} from 'elemental';
 import Moment from 'moment';
 import {AgGridReact} from 'ag-grid-react';
 import 'ag-grid/dist/styles/ag-grid.css';
-import {PaidLeaveEligibility} from './PaidLeaveEligibility.js';
+import * as PaidLeave from './PaidLeaveEligibility.js';
 
 class PaidLeaveGrid extends Component {
 	constructor(props){
 		super(props);
 		var columns = [
 			{headerName: "Week", field : "week", suppressMovable : true},
+			{headerName: "Day + Shift", field : "day", suppressMovable : true},
 			{headerName: "Eligible", field : "eligible", suppressMovable : true},
 			{headerName: "Eligible Date", field : "eligible_date", suppressMovable : true},
 			{headerName: "Hours Met Date", field : "hours_met_date", suppressMovable : true},
@@ -25,10 +26,12 @@ class PaidLeaveGrid extends Component {
 		}
 	}
 	componentWillMount(){
-		var temp_array = PaidLeaveEligibility(20170716, GetSamplePayrolls());
+		var temp_array = PaidLeave.PaidLeaveStatus(20170716, PaidLeave.GetSamplePayrolls());
+		var temp_grid_array = [];
 		for(var index in temp_array){
-			temp_array.push({
+			temp_grid_array.push({
 				week: temp_array[index].week,
+				day : temp_array[index].day,
 				eligible: temp_array[index].eligible,
 				eligible_date: temp_array[index].eligible_date,
 				hours_met_date: temp_array[index].hours_met,
@@ -37,7 +40,7 @@ class PaidLeaveGrid extends Component {
 				days_employed: temp_array[index].days_employed,
 			});
 		}
-		this.setState({rowData : temp_array});
+		this.setState({rowData : temp_grid_array});
 	}
 	render(){
 		var divContainer = {marginTop: '0', width: '100%', height: '100%'};

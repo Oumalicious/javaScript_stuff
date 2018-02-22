@@ -631,7 +631,7 @@ var payrolls = [
 	}
 ];
 
-function PaidLeaveEligibility (start_date, payrolls){
+export function PaidLeaveStatus (start_date, payrolls){
 	var start_moment = Moment(start_date, "YYYYMMDD");
 	var total_hours = 0;
 	var days_employed = 0;
@@ -644,7 +644,6 @@ function PaidLeaveEligibility (start_date, payrolls){
 	var eligible_array = [];
 	var CAN_START;
 	for(var payroll in payrolls){
-		var current_week = payrolls[payroll];
 		var week_number = Moment(payrolls[payroll].week, 'YYYYMMDD');
 		days_employed = week_number.diff(start_moment, 'days');
 		CAN_START = (start_moment.isBefore(week_number) || start_moment.isSame(week_number));
@@ -655,7 +654,8 @@ function PaidLeaveEligibility (start_date, payrolls){
 			DAYS_MET_MOMENT = temp_moment.format("YYYYMMDD");
 		}
 		if(!eligible && DAYS_MET && HOURS_MET){
-			eligible_date = (!eligible && DAYS_MET && HOURS_MET) ? eligible_DATE = HOURS_MET_MOMENT : eligible_date = DAYS_MET_MOMENT;
+			eligible = true;
+			eligible_date = Moment(DAYS_MET_MOMENT, 'YYYYMMDD').isBefore(HOURS_MET_MOMENT) ? eligible_date = HOURS_MET_MOMENT : eligible_date = DAYS_MET_MOMENT;
 		}
 		var work_times = payrolls[payroll].work_times;
 		var days_worked = Object.keys(work_times);
@@ -683,12 +683,13 @@ function PaidLeaveEligibility (start_date, payrolls){
 						HOURS_MET = true;
 						HOURS_MET_MOMENT = Moment(current_week, "YYYYMMDD").format("YYYYMMDD");
 					}
-					if(!eligible && DAYS_MET && HOURS_MET ){
+					if(!eligible && DAYS_MET && HOURS_MET){
 						eligible = true;
-						eligible_date = Moment(current_week, "YYYYMMDD").format("YYYYMMDD");
+						eligible_date = Moment(DAYS_MET_MOMENT, 'YYYYMMDD').isBefore(HOURS_MET_MOMENT) ? eligible_date = HOURS_MET_MOMENT : eligible_date = DAYS_MET_MOMENT;
 					}
 					var eligible_status = {
-						"week" : week_number.format('YYYYMMDD'),
+						"week" : current_week.format('YYYYMMDD'),
+						"day" : days + "  (" + start_shift.format('LT') + " - " + end_shift.format('LT') + ")",
 						"eligible" : eligible,
 						"eligible_date" : eligible_date,
 						"hours_met" : HOURS_MET_MOMENT,
@@ -704,5 +705,10 @@ function PaidLeaveEligibility (start_date, payrolls){
 	return eligible_array;
 }
 
-var result = PaidLeaveEligibility(20170716,payrolls );
-console.log(JSON.stringify(result, null, 2));
+export function GetSamplePayrolls (){
+	return payrolls;
+}
+
+//var result = PaidLeaveStatus[5~(20170716,payrolls );
+//return result;
+//console.log(JSON.stringify(result, null, 2));
