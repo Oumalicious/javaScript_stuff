@@ -16,7 +16,7 @@ class PaidLeaveGrid extends Component {
 			{headerName: "Eligible", field : "eligible", suppressMovable : true},
 			{headerName: "Eligible Date", field : "eligible_date", suppressMovable : true},
 			{headerName: "Hours Met Date", field : "hours_met_date", suppressMovable : true},
-			{headerName: "Days Met", field : "days_met_date", suppressMovable : true},
+			{headerName: "Days Met Date", field : "days_met_date", suppressMovable : true},
 			{headerName: "Total Hours", field : "total_hours", suppressMovable : true},
 			{headerName: "Days Employed", field : "days_employed", suppressMovable : true},
 		];	
