@@ -6,6 +6,7 @@ import AddressEditor from './AddressEditor';
 import AuthorizationEditorNew from './AuthorizationEditorNew';
 import ClaimEntityEditor from './ClaimEntityEditor';
 import DiagCodeEditorNew from './DiagCodeEditorNew';
+import LanguageEditor from './LanguageEditor';
 import MLTCEditor from './MLTCEditor';
 import ProgramEditor from './ProgramEditor';
 import ProgressEditor from './ProgressEditor';
@@ -41,27 +42,13 @@ class PatientDetails extends React.Component
 			for(var key in temp_patient){
 				if(key.charAt(0)== '_') continue;
 				var temp_obj = temp_patient[key];
-				var key_obj;
 				editfields[key] = {};
 				if(typeof temp_obj === 'object'){
-					if(Array.isArray(temp_obj)){
-						key_obj = [];
-					}else{
-						key_obj = {}; 
-					}
-					if(Array.isArray(temp_obj) && temp_obj.length == 0 || temp_obj == {}){
-						key_obj = 'n/a';
-					}else for(var i in temp_obj){
+					for(var i in temp_obj){
 						if(i.charAt(0)=='_') continue;
 						var field = temp_obj[i];
-						var field_obj;
 						editfields[key][i] = {};
 						if(typeof field === 'object'){
-							if(Array.isArray(field)){
-								field_obj = [];
-							}else{
-								field_obj = {};
-							}
 							for(var j in field){
 								if(j.charAt(0)=='_') continue;
 								editfields[key][i][j] = {}
@@ -72,18 +59,16 @@ class PatientDetails extends React.Component
 							editfields[key][i].editfield = field;
 							editfields[key][i].placeholder = field;
 						}
-						key_obj[i] = field_obj;
 					}
 				}else{
 					editfields[key].editfield = temp_obj;
 					editfields[key].placeholder = temp_obj;
-					key_obj = temp_obj;
 				}
 				displays[key] = {};
 				displays[key].show = {display : 'block'};
 				displays[key].hide = {display : 'none'};
 			}
-			delete displays.DOB,displays.MDCAID,displays.SOC,displays.SSC,displays.allstar_id,displays.coordinator,displays.gender,displays.phone,displays.name,displays.allstar_id,displays.flag,displays.initial_assessment_date,displays.physician,displays.level,displays.returned_485,displays,displays.six_month_485_returned,displays.authorization_received,displays.six_month_assessment_date,displays.primary_dx,displays.emergency_code;
+//			delete displays.DOB,displays.MDCAID,displays.SOC,displays.SSC,displays.allstar_id,displays.coordinator,displays.gender,displays.phone,displays.name,displays.allstar_id,displays.flag,displays.initial_assessment_date,displays.physician,displays.level,displays.returned_485,displays,displays.six_month_485_returned,displays.authorization_received,displays.six_month_assessment_date,displays.primary_dx,displays.emergency_code;
 			var field_checklist = ['DOB','MDCAID','SOC','SSC','allstar_id','category','coordinator','flag','gender','initial_assesssment_date','language','level','primary_dx','referrer','returned_485','six_month_485_returned','six_month_assessment_date','authorization_received','initial_assessment_date','physician'];
 			var array_checklist = ['MLTC_CHHA','authorization','claim_entity','claim_type','diagnosis_codes','program','progress_report','service_code'];
 			for(var i in field_checklist){
@@ -757,7 +742,7 @@ class PatientDetails extends React.Component
 						<div style = {Object.assign({},this.state.displays.language.hide,{width : '550px', padding : '10px'})}>
 							{
 								this.state.displays.language.hide['display'] == 'block' &&
-								<LanguageEditorNew
+								<LanguageEditor
 									ref = {(input) => {this.language_editor = input}}
 									language_options = {["English","Cantonese","Mandarin","Fujian","Fuzhou","Spanish","Toisan","Korean","Chinese"]}
 									current_language = {this.state.patient.language}
